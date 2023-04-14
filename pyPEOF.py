@@ -1,9 +1,15 @@
 from pefile import PE ,PEFormatError
+import argparse
 import os
 
-def main(filepath):
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", "--file", required=True, type=open,help="PE file to read")
+args = parser.parse_args()
+file = args.file
+
+def readEof(filepath):
     try:
-        ImageSize = 0
+        imageSize = 0
         pefile = PE(filepath)
 
         if(hex(pefile.DOS_HEADER.e_magic) != "0x5a4d"): # check if pe file is valid,e_magic must be 0x5a4d
@@ -13,17 +19,16 @@ def main(filepath):
 
         if hex(pefile.FILE_HEADER.Machine) == "0x14c":  # checking architecture
             print("Image architecture is 32bit.")
-            ImageSize += (pefile.OPTIONAL_HEADER.SizeOfHeaders + pefile.OPTIONAL_HEADER.DATA_DIRECTORY[4].Size ) # adding the IMAGE_DIRERCTORY_ENTRY_SECURITY if target application is signed otherwise the full image size wont match.
+            imageSize += (pefile.OPTIONAL_HEADER.SizeOfHeaders + pefile.OPTIONAL_HEADER.DATA_DIRECTORY[4].Size ) # adding the IMAGE_DIRERCTORY_ENTRY_SECURITY if target application is signed otherwise the full image size wont match.
         else:
             print("Image architecture is 64bit.")
-            ImageSize += (pefile.OPTIONAL_HEADER.SizeOfHeaders + pefile.OPTIONAL_HEADER.DATA_DIRECTORY[4].Size ) # adding the IMAGE_DIRERCTORY_ENTRY_SECURITY if target application is signed otherwise the full image size wont match.
+            imageSize += (pefile.OPTIONAL_HEADER.SizeOfHeaders + pefile.OPTIONAL_HEADER.DATA_DIRECTORY[4].Size ) # adding the IMAGE_DIRERCTORY_ENTRY_SECURITY if target application is signed otherwise the full image size wont match.
 
         for section in pefile.sections: # enumerate each section and add to current mesured image size.
-            ImageSize += section.SizeOfRawData
-        #print('File Size on the disk: ' + str(getFileSize("test64.exe")) + ' bytes.')
-        #print('Calculated Image Size : ' + str(ImageSize) + ' bytes.')
+            imageSize += section.SizeOfRawData
+            
         AFileSize = os.path.getsize(filepath)
-        EOFSize = (AFileSize - ImageSize)
+        EOFSize = (AFileSize - imageSize)
 
         if EOFSize>0 :         #checking if eof data is present in target file.
             print("%s bytes of EOF data detected." %EOFSize)
@@ -31,9 +36,11 @@ def main(filepath):
             with open(filepath,"rb") as fp:
                 fp.seek(-EOFSize, 2)
                 eofdata = fp.read(EOFSize)
-                print("Printing EOF data: \n%s" %eofdata)
+                prompt = input("Do you want to print the EOF data? (y/n): ")
+                if prompt == "y" or prompt == "yes":
+                    print("Printing EOF data: \n%s" %eofdata)
                 
-                prompt = input("Do you want to dump the EOF data? (y/n): ") # prompt to dump eof data
+                prompt = input("Do you want to dump the EOF data? (y/n): ")
                 if prompt == "y" or prompt == "yes":
                     with open("%s.dump"%filepath,"wb") as dump:
                         dump.write(eofdata)
@@ -45,10 +52,4 @@ def main(filepath):
     except OSError:
         print("%s does not exist or is inaccessible." %filepath) 
 
-
-#usage
-main('payload.exe')
-
-
-##TODO##
-#readme.md
+readEof(file.name)
