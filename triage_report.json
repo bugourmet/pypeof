@@ -1,0 +1,69 @@
+{
+  "file_path": "C:\\Users\\Admin\\Desktop\\malware.exe",
+  "file_size": 357888,
+  "md5": "a82739f69681388a1474da51fad3cdfe",
+  "sha1": "83cf212279b295ff68d01fc244ce9b2685fcb60a",
+  "sha256": "b9350dccb957a0f9d1c508902643a55a093592bea187df909e38b37506d5ef9a",
+  "imphash": "f34d5f2d4577ed6d9ceec516c1f5a744",
+  "architecture": "x86 (32-bit)",
+  "is_dll": false,
+  "is_exe": true,
+  "is_driver": false,
+  "entry_point": 362174,
+  "compile_timestamp": {
+    "raw_value": 1791737797,
+    "datetime_utc": "2026-10-11T16:56:37+00:00",
+    "suspicious": false,
+    "reason": "Timestamp appears normal"
+  },
+  "sections": [
+    {
+      "name": ".text",
+      "virtual_address": 8192,
+      "virtual_size": 353988,
+      "raw_size": 354304,
+      "entropy": 6.4291,
+      "md5": "5fb5f5f524ae997f3b67fc75be708291",
+      "characteristics": "CNT_CODE | MEM_EXECUTE | MEM_READ",
+      "anomalies": []
+    },
+    {
+      "name": ".rsrc",
+      "virtual_address": 368640,
+      "virtual_size": 2108,
+      "raw_size": 2560,
+      "entropy": 5.1113,
+      "md5": "c509127e6a011802f4b8fb8d2981a495",
+      "characteristics": "CNT_INITIALIZED_DATA | MEM_READ",
+      "anomalies": []
+    },
+    {
+      "name": ".reloc",
+      "virtual_address": 376832,
+      "virtual_size": 12,
+      "raw_size": 512,
+      "entropy": 0.1019,
+      "md5": "bc207f569c88f2746c920d6514024046",
+      "characteristics": "CNT_INITIALIZED_DATA | MEM_READ",
+      "anomalies": []
+    }
+  ],
+  "overlay": null,
+  "yara_matches": [
+    {
+      "rule_name": "Suspicious_Strings",
+      "tags": [],
+      "description": "Detects strings commonly found in malware",
+      "matched_strings": [
+        "0x3DBF1: $s4 => b'FromBase64String'",
+        "0x38065: $s8 => b'DownloadFile'",
+        "0x453D5: $s8 => b'DownloadFile'",
+        "0x45B18: $s8 => b'DownloadFile'",
+        "0x45B27: $s8 => b'DownloadFile'"
+      ]
+    }
+  ],
+  "risk_indicators": [
+    "\ud83d\udd34 YARA hit: Suspicious_Strings \u2013 Detects strings commonly found in malware"
+  ]
+}

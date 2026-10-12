@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "pypeof"
+version = "2.0.0"
+description = "PE Triage Tool — rapid static analysis of Windows executables"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "pefile>=2023.2.7",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+yara = ["yara-python>=4.3.0"]
+
+[project.scripts]
+pypeof = "pypeof.cli:main"
+
+[project.urls]
+Repository = "https://github.com/bugourmet/pypeof"
+
+[tool.setuptools.packages.find]
+include = ["pypeof*"]
+
+[tool.setuptools.package-data]
+pypeof = ["rules/*.yar"]
